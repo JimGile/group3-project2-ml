@@ -1,0 +1,181 @@
+RANKING OF CITIES BASED ON % ANNUAL POSSIBLE SUNSHINE IN DESCENDING 
+ORDER FROM MOST TO LEAST AVERAGE POSSIBLE SUNSHINE 
+                                          
+SOURCE:  http://www.ncdc.noaa.gov/oa/climate/online/ccd/pctpos.txt
+DATA THROUGH 2004
+
+CITY, STATE                       ANNUAL % AVG POSSIBLE SUNSHINE        NO. OF YEARS OF DATA
+YUMA, AZ                      			90%				42
+REDDING, CA                  			88% 				10
+LAS VEGAS, NV             			85%                             47
+PHOENIX, AZ               			85%                            101
+TUCSON, AZ                			85%                             53
+EL PASO, TX               	            	84%                             54
+FRESNO, CA                   			79%                             46
+RENO, NV                       			79%                             45
+FLAGSTAFF, AZ           			78%                             15
+SACRAMENTO, CA          			78%                             46
+ALBUQUERQUE, NM         			76%                             63
+KEY WEST, FL            			76%                             38
+PUEBLO, CO                      	        76%                             61
+MIDLAND-ODESSA, TX       			74%                             22
+ROSWELL, NM              			74%                              7
+AMARILLO, TX             			73%                             61
+ELY, NV                          	       	73%                             56
+LOS ANGELES C.O., CA    			73%                             32
+LAKE CHARLES, LA            			72%                             19
+LUBBOCK, TX                 			72%                             25
+NORTH LITTLE ROCK, AR       			72%                             24
+GRAND JUNCTION, CO          			71%                             56
+HONOLULU, HI              			71%                             46
+JOHNSTON ISLAND, PC             	    	71%                             22
+ABILENE, TX                     	      	70%                             49
+DODGE CITY, KS          			70%                             59
+MIAMI, FL               		        70%                             20
+MILFORD, UT              			70%                             16
+WAKE ISLAND, PC         			70%                             28
+DENVER, CO              			69%                             46
+LANDER, WY              			68%                             50
+OKLAHOMA CITY, OK         			68%	                        42
+SAN DIEGO, CA             			68%                             56
+WINNEMUCCA, NV          			68%                             42
+CONCORDIA, KS           			67%                             34
+KAHULUI, HI             			67%                             37
+NORTH PLATTE, NE        			67%                             50
+SAN JUAN, PR            			67%                             47
+APALACHICOLA, FL        			66%                             57
+CHEYENNE, WY            			66%                             63
+MACON, GA               			66%                             48
+SALT LAKE CITY, UT           			66%                             64
+SAN FRANCISCO C.O., CA				66%                             38
+TAMPA, FL                			66%                             50
+VALENTINE, NE               			65%                             29
+WICHITA, KS             			65%                             49
+BOISE, ID                  		        64%                             60
+COLUMBIA, SC               			64%                             46
+MEMPHIS, TN                			64%                             35
+POCATELLO, ID           			64%                             53
+SHREVEPORT, LA          			64%                             50
+TUPELO, MS              			64%                             13
+CHARLESTON AP, SC        			63%                             39
+HURON, SD               			63%                             55
+JACKSONVILLE, FL        			63%                             50
+RAPID CITY, SD          			63%                             55
+RICHMOND, VA            			63%                             46
+SHERIDAN, WY            			63%                             55
+WILMINGTON, NC          			63%                             51
+CHARLOTTE, NC           			62%                             48
+GALVESTON, TX           			62%                            103 
+LITTLE ROCK, AR         			62%                             32
+SAVANNAH, GA            			62%                             46
+TULSA, OK                   			62%                             55
+CAIRO, IL                 		        61%                             45
+DALLAS-FORT WORTH, TX  				61%                             17
+FORT SMITH, AR          			61%                             51
+GREAT FALLS, MT           			61%                             46
+JACKSON, MS             			61%                             33
+LINCOLN, NE             			61%                             40
+SIOUX CITY, IA          			61%                             55
+TOPEKA, KS              			61%                             53
+ATLANTA, GA             			60%                             65
+AUSTIN/BERGSTROM, TX            		60%                             60
+AUSTIN/CITY, TX                 		60%                             58
+BILLINGS, MT            			60%                             57
+BROWNSVILLE, TX            			60%                             59
+CAPE HATTERAS, NC       			60%                             33
+CORPUS CHRISTI, TX           			60%                             60
+GREENSBORO-WNSTN-SALM, NC			60%                             68
+GREENVILLE-SPARTANBURG AP, SC			60%                             39
+KANSAS CITY, MO              			60%                             23
+NORFOLK, VA                  			60%                             32
+OMAHA (NORTH), NE       			60%                             57
+PENSACOLA, FL           			60%                              5
+SAN ANTONIO, TX             			60%                             53
+SPRINGFIELD, MO                 		60%                             57
+WILLISTON, ND                   		60%                             39
+ASHEVILLE, NC               			59%                             32
+BISMARCK, ND                   			59%                             63
+DES MOINES, IA          			59%                             50
+EVANSVILLE, IN          			59%                             56
+FORT WAYNE, IN          			59%                             52
+HELENA, MT                   			59%                             55
+HOUSTON, TX                   			59%                             27
+LYNCHBURG, VA                			59%                             52
+BIRMINGHAM AP, AL        			58%                             34
+BOSTON, MA                   			58%                             61
+HARRISBURG, PA		  			58%                             62
+LIHUE, HI                 		        58%                             51
+MAJURO, MARSHALL IS, PC    			58%                             42
+MINNEAPOLIS-ST.PAUL, MN     			58%                             58
+MONTGOMERY, AL          			58%                             45
+NEW YORK C.PARK, NY             		58%                            109
+PADUCAH KY                      		58%                             18
+PORT ARTHUR, TX            			58%                             26
+PROVIDENCE, RI               			58%                             42
+RALEIGH, NC                      	        58%                             42
+SPRINGFIELD, IL         			58%                             48
+BALTIMORE, MD                 			57%                             40
+BIRMINGHAM C.O., AL     			57%                             10
+CHATTANOOGA, TN           			57%                             65
+FARGO, ND               			57%                             54                                                         
+MIDDLETOWN/HARRISBURG AP, PA			57%                             62
+NEW ORLEANS, LA            			57%                             22
+PORTLAND, ME                  			57%                             55
+ST. LOUIS, MO           			57%                             37
+ATLANTIC CITY AP, NJ     			56%                             36
+COLUMBIA, MO                    		56%                             27
+HARTFORD, CT                    		56%                             42
+KNOXVILLE, TN                 			56%                             57
+LOUISVILLE, KY                  		56%                             48
+NASHVILLE, TN                 			56%                             54
+PEORIA, IL              		        56%                             52
+PHILADELPHIA, PA                 		56%                             60
+WASHINGTON NAT'L AP, D.C.   			56%                             50
+INDIANAPOLIS, IN        			55%                             53
+MISSOULA, MT                			55%                             57
+MOLINE, IL              		        55%                             53
+YAP, MICRONESIA., PC         			55%                             43
+CHICAGO, IL              			54%                             16
+CONCORD, NH                 			54%                             58
+GREEN BAY, WI           			54%                             53
+MADISON, WI             			54%                             50
+MILWAUKEE, WI           			54%                             55
+SPOKANE, WA              			54%                             48
+ALBANY, NY                   			53%                             61
+ALLENTOWN, PA                			53%                             12
+DAYTON, OH                       	        53%                             53
+DETROIT, MI                    			53%                             31
+BLUE HILL, MA                			52%                            112
+DULUTH, MN                    			52%                             48
+TOLEDO, OH                       	        52%                             41
+AVOCA, PA                       	        51%                             41
+EUREKA, CA.                 			51%                             84
+KOROR, PC                      			51%                             42
+LANSING, MI                   			51%                             42
+ROCHESTER, NY             			51%                             57
+COLUMBUS, OH                  			50%                             45
+GREATER CINCINNATI AP, KY  			50%                             13
+MARQUETTE, MI             			50%                             21
+BINGHAMTON, NY           			49%                             51
+BURLINGTON, VT               			49%                             59
+CLEVELAND, OH                			49%                             59
+ALPENA, MI                    			48%                             37
+BUFFALO, NY                 			48%                             59
+PORTLAND, OR            			48%                             46
+CHUUK, MICORNESIA., PC      			47%                             42
+SAULT STE. MARIE, MI    			47%                             55
+SEATTLE SEA-TAC AP, WA    			47%                             30
+GRAND RAPIDS, MI         			46%                             36
+GUAM, PC                    			46%                             39
+SYRACUSE, NY              			46%                             53
+PITTSBURGH, PA                   		45%                             49
+SEATTLE C.O., WA            			43%                             31
+NOME, AK                    			42%                             40
+PAGO PAGO, AMER SAMOA, PC 			42%                             34
+ANCHORAGE, AK           			41%                             40
+HILO, HI                		        41%                             52
+POHNPEI, MICRONESIA, PC       			41%                             44
+ELKINS, WV                        	        40%                             11
+MT. WASHINGTON, NH       			33%                             64
+QUILLAYUTE, WA               			33%                             30
+JUNEAU, AK                  			30%                             33
