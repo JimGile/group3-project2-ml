@@ -20,6 +20,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from statsmodels.stats.outliers_influence import variance_inflation_factor
+from sklearn.feature_selection import SequentialFeatureSelector
 
 
 def feature_name_combiner(feature_name: str, category: str) -> str:
@@ -226,8 +227,7 @@ class GenericSupervisedModelExecutor:
 
         # Create Ordinal preprocessing pipeline for all categorical columns
         ordinal_cols = list(self.ordinal_encoding_cols.keys())
-        for i, col in enumerate(ordinal_cols):
-            ord_step_name = f'ordinal_{i}'
+        for col in ordinal_cols:
             ordinal_steps = []
             ordinal_steps.append((col,
                                   OrdinalEncoder(categories=[self.ordinal_encoding_cols[col]],
@@ -236,7 +236,7 @@ class GenericSupervisedModelExecutor:
                                                  unknown_value=-1)))
             ordinal_steps.append(('scaler', StandardScaler()))
             ordinal_transformer = Pipeline(steps=ordinal_steps, memory='named_steps')
-            column_transformers.append((ord_step_name, ordinal_transformer, [col]))
+            column_transformers.append((f'ordinal_{col}', ordinal_transformer, [col]))
 
         # Combine transformers using ColumnTransformer
         # apply different transformations to different columns of a dataset
@@ -311,10 +311,8 @@ class GenericSupervisedModelExecutor:
             column_transformers.append(('categorical', categorical_transformer, categorical_cols))
 
         # Create Ordinal preprocessing pipeline
-        ord_num = 0
         ordinal_cols = list(self.ordinal_encoding_cols.keys())
         for col in ordinal_cols:
-            ord_num += 1
             ordinal_steps = []
             ordinal_steps.append((col,
                                   OrdinalEncoder(categories=[self.ordinal_encoding_cols[col]],
@@ -323,7 +321,7 @@ class GenericSupervisedModelExecutor:
                                                  unknown_value=-1)))
             ordinal_steps.append(('scaler', StandardScaler()))
             ordinal_transformer = Pipeline(steps=ordinal_steps, memory='named_steps')
-            column_transformers.append(('ordinal_'+str(ord_num), ordinal_transformer, [col]))
+            column_transformers.append((f'ordinal_{col}', ordinal_transformer, [col]))
 
         # Combine transformers using ColumnTransformer
         # apply different transformations to different columns of a dataset
@@ -455,6 +453,23 @@ class EdaToolbox(GenericSupervisedModelExecutor):
             plt.xlabel(col)
         plt.tight_layout()
         plt.show()
+
+    def perform_unsupervised_regression_feature_selection(
+            self,
+            feature_transformer: ColumnTransformer,
+            target_transformer: TransformerMixin,
+            n_features=10) -> np.ndarray:
+        X, y = self.scale_and_encode(feature_transformer, target_transformer)
+        feature_names = np.array(X.columns)
+        ridge = RidgeCV(alphas=np.logspace(-6, 6, num=5)).fit(X, y)
+        start = time.time()
+        sfs_forward = SequentialFeatureSelector(
+            ridge, n_features_to_select=n_features, direction="forward"
+        ).fit(X, y)
+        end = time.time()
+        print(f"Selected {n_features} features by forward sequential featureselection in {end - start:.3f} seconds")
+        selected_features = feature_names[sfs_forward.get_support()]
+        return [col.split('__')[1] for col in selected_features]
 
     def get_regression_important_features_df(self,
                                              fa_df: pd.DataFrame,
