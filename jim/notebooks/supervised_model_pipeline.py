@@ -21,6 +21,9 @@ from sklearn.model_selection import cross_val_score
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from sklearn.feature_selection import SequentialFeatureSelector
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import roc_auc_score
+from sklearn.pipeline import make_pipeline
 
 
 def feature_name_combiner(feature_name: str, category: str) -> str:
@@ -51,18 +54,18 @@ class SelectedFeaturesTransformer(BaseEstimator, TransformerMixin):
 
 class SimplePruner(BaseEstimator, TransformerMixin):
     def __init__(self,
-                 infrequent_threshold: float,
-                 pct_missing_threshold: float):
-        self.infrequent_threshold = infrequent_threshold
-        self.pct_missing_threshold = pct_missing_threshold
+                 infreq: float,
+                 pct_miss: float):
+        self.infreq = infreq
+        self.pct_miss = pct_miss
 
     def fit(self, X, y=None):
         x_df = pd.DataFrame(X)
         self.x_pruned: pd.DataFrame = x_df.loc[:, x_df.apply(
-            lambda col: col.value_counts(normalize=True).max() < self.infrequent_threshold
+            lambda col: col.value_counts(normalize=True).max() < self.infreq
         )]
         self.x_pruned: pd.DataFrame = self.x_pruned.loc[:, self.x_pruned.apply(
-            lambda col: col.isna().mean() < self.pct_missing_threshold
+            lambda col: col.isna().mean() < self.pct_miss
         )]
         return self
 
@@ -100,12 +103,13 @@ class GenericSupervisedModelExecutor:
         self.target_column = target_column
         self.test_size = test_size
         self.random_state = random_state
-        self.prune_threshold_numerical = 1.0
-        self.prune_threshold_categorical = 1.0
-        self.prune_threshold_pct_missing = 1.0
-        self.ordinal_encoding_cols: dict[str, list] = {}
+        self.prune_infreq_numerical = 1.0
+        self.prune_infreq_categorical = 1.0
+        self.prune_pct_missing = 1.0
+        self.ordinal_encoding_col_dict: dict[str, list] = {}
         self.selected_feature_list: Optional[list[str]] = None
-        self.basic_feature_transformer: Optional[ColumnTransformer] = None
+        self.basic_ordinal_feature_transformer: Optional[ColumnTransformer] = None
+        self.basic_ohe_feature_transformer: Optional[ColumnTransformer] = None
         self.feature_transformer: Optional[ColumnTransformer] = None
         self.target_transformer: Optional[TransformerMixin] = None
 
@@ -133,7 +137,7 @@ class GenericSupervisedModelExecutor:
     def add_ordinal_encoding_column(self, col_name: str, categories: list | None):
         if categories is None:
             categories = self.get_ordinal_encoding_categories(col_name)
-        self.ordinal_encoding_cols[col_name] = categories
+        self.ordinal_encoding_col_dict[col_name] = categories
 
     def scale_and_encode(
             self,
@@ -182,28 +186,34 @@ class GenericSupervisedModelExecutor:
             X, y, test_size=self.test_size, random_state=self.random_state)
         return X_train, X_test, y_train, y_test
 
-    def get_basic_feature_transformer(self) -> ColumnTransformer:
+    def get_basic_ordinal_feature_transformer(self) -> ColumnTransformer:
         """
-        Returns a ColumnTransformer object that preprocesses the input DataFrame `X`.
+        Returns a ColumnTransformer object that preprocesses the class's DataFrame.
         The preprocessing includes pruning unnecessary columns, handling missing values,
         scaling numerical features, and ordinal encoding categorical features.
 
-        This will return the basic_feature_transformer if it has already been created or create a new one.
+        In order to prune unnecessary columns, set prune_infreq_numerical and prune_pct_missing
+        attributes to some value less than 1.0. For example, if you set prune_infreq_numerical
+        to 0.9, all numerical columns with more than 90% missing values will be pruned.
+
+        This method will automatically ordinally encode all categorical features.
+
+        It will return the basic_ordinal_feature_transformer if it has already been created or create a new one.
 
         Returns:
             ColumnTransformer: A ColumnTransformer object used to prune unnecessary columns, handle missing
             data, scale, and encode.
         """
-        if self.basic_feature_transformer is None:
+        if self.basic_ordinal_feature_transformer is None:
             X = self._get_x()
             for col_name in self.get_categorical_columns(X):
                 self.add_ordinal_encoding_column(col_name, None)
-            self.basic_feature_transformer = self.create_basic_eda_transformer(X)
-        return self.basic_feature_transformer
+            self.basic_ordinal_feature_transformer = self.create_basic_ord_transformer(X)
+        return self.basic_ordinal_feature_transformer
 
-    def create_basic_eda_transformer(self, X: pd.DataFrame) -> ColumnTransformer:
+    def create_basic_ord_transformer(self, X: pd.DataFrame) -> ColumnTransformer:
         """
-        Creates a basic ColumnTransformer object to preprocess the input DataFrame `X`.
+        Creates a basic ColumnTransformer object to preprocess the class's DataFrame.
         The preprocessing includes pruning unnecessary columns, handling missing values,
         scaling numerical features, and ordinal encoding categorical features.
 
@@ -214,33 +224,65 @@ class GenericSupervisedModelExecutor:
             ColumnTransformer object used to prune unnecessary columns, handle missing data, scale, and encode
         """
         # Initialize column transformer list
-        column_transformers = []
+        transformers = []
 
-        # Create numerical preprocessing pipeline
-        numerical_cols = X.select_dtypes(include=['int64', 'float64']).columns
-        numerical_steps = []
-        numerical_steps.append(('pruner', SimplePruner(0.9, 0.9)))
-        numerical_steps.append(('imputer', SimpleImputer(strategy='mean')))
-        numerical_steps.append(('scaler', StandardScaler()))
-        numerical_transformer = Pipeline(steps=numerical_steps, memory='named_steps')
-        column_transformers.append(('numerical', numerical_transformer, numerical_cols))
+        # Add numerical preprocessing pipeline to transformer list
+        self._add_numerical_pipeline(transformers, X, 'mean')
 
-        # Create Ordinal preprocessing pipeline for all categorical columns
-        ordinal_cols = list(self.ordinal_encoding_cols.keys())
-        for col in ordinal_cols:
-            ordinal_steps = []
-            ordinal_steps.append((col,
-                                  OrdinalEncoder(categories=[self.ordinal_encoding_cols[col]],
-                                                 handle_unknown='use_encoded_value',
-                                                 encoded_missing_value=-2,
-                                                 unknown_value=-1)))
-            ordinal_steps.append(('scaler', StandardScaler()))
-            ordinal_transformer = Pipeline(steps=ordinal_steps, memory='named_steps')
-            column_transformers.append((f'ordinal_{col}', ordinal_transformer, [col]))
+        # Add ordinal preprocessing pipeline to transformer list (as needed)
+        self._add_ordinal_pipeline(transformers)
 
         # Combine transformers using ColumnTransformer
-        # apply different transformations to different columns of a dataset
-        return ColumnTransformer(transformers=column_transformers, remainder='drop')
+        # to apply different transformations to different columns
+        return ColumnTransformer(transformers=transformers, remainder='drop')
+
+    def get_basic_ohe_feature_transformer(self, max_cat=5) -> ColumnTransformer:
+        """
+        Returns a ColumnTransformer object that preprocesses the class's DataFrame.
+        The preprocessing includes pruning unnecessary columns, handling missing values,
+        scaling numerical features, and OneHot encoding categorical features.
+
+        In order to prune unnecessary columns, set prune_infreq_numerical and prune_pct_missing
+        attributes to some value less than 1.0. For example, if you set prune_infreq_numerical
+        to 0.9, all numerical columns with more than 90% missing values will be pruned.
+
+        This method will automatically ordinally encode all categorical features.
+
+        It will return the basic_ordinal_feature_transformer if it has already been created or create a new one.
+
+        Returns:
+            ColumnTransformer: A ColumnTransformer object used to prune unnecessary columns, handle missing
+            data, scale, and encode.
+        """
+        if self.basic_ohe_feature_transformer is None:
+            X = self._get_x()
+            self.basic_ohe_feature_transformer = self.create_basic_ohe_transformer(X, max_cat)
+        return self.basic_ohe_feature_transformer
+
+    def create_basic_ohe_transformer(self, X: pd.DataFrame, max_cat=5) -> ColumnTransformer:
+        """
+        Creates a basic ColumnTransformer object to preprocess the class's DataFrame.
+        The preprocessing includes pruning unnecessary columns, handling missing values,
+        scaling numerical features, and OneHot encoding categorical features.
+
+        Parameters:
+            X (pandas DataFrame): containing the features to be transformed
+
+        Returns:
+            ColumnTransformer object used to prune unnecessary columns, handle missing data, scale, and encode
+        """
+        # Initialize column transformer list
+        transformers = []
+
+        # Add numerical preprocessing pipeline to transformer list
+        self._add_numerical_pipeline(transformers, X, 'mean')
+
+        # Add categorical preprocessing pipeline to transformer list (as needed)
+        self._add_categorical_pipeline(transformers, X, 'constant', max_cat)
+
+        # Combine transformers using ColumnTransformer
+        # to apply different transformations to different columns
+        return ColumnTransformer(transformers=transformers, remainder='drop')
 
     def create_feature_transformer(
             self,
@@ -251,11 +293,11 @@ class GenericSupervisedModelExecutor:
         Creates a ColumnTransformer object to prune unnecessary columns, handle missing values,
         scale numerical features, and encode categorical variables.
 
-        In order to prune unnecessary columns, set prune_threshold_numerical and prune_threshold_categorical
-        properties to some value less than 1.0. For example, if you set prune_threshold_numerical to 0.9,
-        only columns with less than 90% missing values will be pruned.
+        In order to prune unnecessary columns, set prune_infreq_numerical, prune_infreq_categorical
+        and prune_pct_missing attributes to some value less than 1.0. For example, if you set prune_infreq_numerical
+        to 0.9, all numerical columns with more than 90% missing values will be pruned.
 
-        Use the set_selected_feature_list method to prune unnecessary columns prior to calling this.
+        Use the set_selected_feature_list method to only process the features in that list.
         Use the add_ordinal_encoding_column method to add ordinal encoding to one or more columns prior to calling this.
 
         Parameters:
@@ -270,72 +312,90 @@ class GenericSupervisedModelExecutor:
         X = self._get_x()
 
         # Initialize column transformer list
-        column_transformers = []
+        transformers = []
 
+        # Add numerical preprocessing pipeline to transformer list
+        self._add_numerical_pipeline(transformers, X, num_strategy)
+
+        # Add categorical preprocessing pipeline to transformer list (as needed)
+        self._add_categorical_pipeline(transformers, X, cat_strategy, max_categories)
+
+        # Add ordinal preprocessing pipeline to transformer list (as needed)
+        self._add_ordinal_pipeline(transformers)
+
+        # Combine transformers using ColumnTransformer
+        # to apply different transformations to different columns
+        return ColumnTransformer(transformers=transformers, remainder='drop')
+
+    def _add_numerical_pipeline(
+            self,
+            transformers: list,
+            X: pd.DataFrame,
+            strategy: str):
         # Create numerical preprocessing pipeline
         numerical_cols = self.get_numerical_columns(X)
         numerical_steps = []
         numerical_steps.append(('pruner', SimplePruner(
-            infrequent_threshold=self.prune_threshold_numerical,
-            pct_missing_threshold=self.prune_threshold_pct_missing)
+            infreq=self.prune_infreq_numerical,
+            pct_miss=self.prune_pct_missing)
         ))
         numerical_steps.append(('selector', SelectedFeaturesTransformer(
             selected_feature_list=self.selected_feature_list)
         ))
-        numerical_steps.append(('imputer', SimpleImputer(strategy=num_strategy)))
+        numerical_steps.append(('imputer', SimpleImputer(strategy=strategy)))
         numerical_steps.append(('scaler', StandardScaler()))
         numerical_transformer = Pipeline(steps=numerical_steps, memory='named_steps')
-        column_transformers.append(('numerical', numerical_transformer, numerical_cols))
+        transformers.append(('numerical', numerical_transformer, numerical_cols))
 
+    def _add_categorical_pipeline(
+            self,
+            transformers: list,
+            X: pd.DataFrame,
+            strategy: str,
+            max_cat=5):
         # Create categorical preprocessing pipeline
         categorical_cols = self.get_categorical_columns(X)
         categorical_cols = self._filter_categorical_cols(categorical_cols)
         if len(categorical_cols) > 0:
             categorical_steps = []
             categorical_steps.append(('pruner', SimplePruner(
-                infrequent_threshold=self.prune_threshold_categorical,
-                pct_missing_threshold=self.prune_threshold_pct_missing)
+                infreq=self.prune_infreq_categorical,
+                pct_miss=self.prune_pct_missing)
             ))
             categorical_steps.append(('selector', SelectedFeaturesTransformer(
                 selected_feature_list=self.selected_feature_list)
             ))
-            categorical_steps.append(('imputer', SimpleImputer(strategy=cat_strategy)))
+            categorical_steps.append(('imputer', SimpleImputer(strategy=strategy)))
             categorical_steps.append(('onehot', OneHotEncoder(
                 handle_unknown='infrequent_if_exist',
-                max_categories=max_categories,
+                max_categories=max_cat,
                 sparse_output=False,
                 feature_name_combiner=feature_name_combiner))
             )
-
             categorical_transformer = Pipeline(steps=categorical_steps, memory='named_steps')
-            column_transformers.append(('categorical', categorical_transformer, categorical_cols))
+            transformers.append(('categorical', categorical_transformer, categorical_cols))
 
-        # Create Ordinal preprocessing pipeline
-        ordinal_cols = list(self.ordinal_encoding_cols.keys())
-        for col in ordinal_cols:
+    def _add_ordinal_pipeline(
+            self,
+            transformers: list):
+        # Create Ordinal preprocessing pipeline for all categorical columns
+        for col, categories in self.ordinal_encoding_col_dict.items():
             ordinal_steps = []
             ordinal_steps.append((col,
-                                  OrdinalEncoder(categories=[self.ordinal_encoding_cols[col]],
-                                                 encoded_missing_value=-1,
+                                  OrdinalEncoder(categories=[categories],
                                                  handle_unknown='use_encoded_value',
-                                                 unknown_value=-1)))
+                                                 unknown_value=-1,
+                                                 encoded_missing_value=-2)))
             ordinal_steps.append(('scaler', StandardScaler()))
             ordinal_transformer = Pipeline(steps=ordinal_steps, memory='named_steps')
-            column_transformers.append((f'ordinal_{col}', ordinal_transformer, [col]))
-
-        # Combine transformers using ColumnTransformer
-        # apply different transformations to different columns of a dataset
-        return ColumnTransformer(transformers=column_transformers, remainder='drop')
+            transformers.append((f'ordinal_{col.lower()}', ordinal_transformer, [col]))
 
     def _filter_categorical_cols(self, column_list) -> list:
         if self.selected_feature_list is None:
-            return [col for col in column_list if col not in self.ordinal_encoding_cols.keys()]
+            return [col for col in column_list if col not in self.ordinal_encoding_col_dict.keys()]
         return [col for col in column_list
-                if col not in self.ordinal_encoding_cols.keys()
+                if col not in self.ordinal_encoding_col_dict.keys()
                 and col in self.selected_feature_list]
-
-    def _filter_out_ordinal_cols(self, column_list):
-        return list(set(column_list) - set(self.ordinal_encoding_cols.keys()))
 
 
 class EdaToolbox(GenericSupervisedModelExecutor):
@@ -355,11 +415,11 @@ class EdaToolbox(GenericSupervisedModelExecutor):
             target_transformation_dict: dict[str, TransformerMixin]) -> None:
 
         # Visualize the distribution of transformed SalePrice variables
-        plt.figure(figsize=(15, 10))
+        plt.figure(figsize=(15, 8))
         i = 0
         for name, transformer in target_transformation_dict.items():
             i += 1
-            plt.subplot(2, 2, i)
+            plt.subplot(2, 3, i)
             sns.histplot(transformer.fit_transform(self.df[[self.target_column]]), kde=True)
             plt.title(f'Distribution of {self.target_column} with {name}')
             plt.xlabel(name)
@@ -371,7 +431,7 @@ class EdaToolbox(GenericSupervisedModelExecutor):
             self,
             target_transformation_dict: dict[str, TransformerMixin],
             model_dict: dict[str, BaseEstimator]) -> pd.DataFrame:
-        x_basic_transformer: ColumnTransformer = self.get_basic_feature_transformer()
+        x_basic_transformer: ColumnTransformer = self.get_basic_ordinal_feature_transformer()
         X = self._get_x()
         X_scaled = x_basic_transformer.fit_transform(X)
         y = self._get_target_df()
@@ -421,14 +481,15 @@ class EdaToolbox(GenericSupervisedModelExecutor):
             self,
             feature_transformer: ColumnTransformer,
             target_transformer: TransformerMixin) -> pd.DataFrame:
+        y_unscaled = self.df[self.target_column]
         X, y = self.scale_and_encode(feature_transformer, target_transformer)
         corr_df = self._get_pd_correlation_abs_features_df(X, y)
         coef_df = self._get_ridge_coefficient_abs_features_df(X, y)
-        pvals_df = self._get_lr_pval_features_df(X, y)
+        pvals_df = self._get_lr_pval_features_df(X, y_unscaled)
         vif_df = self._get_vif_features_df(X)
         pca_df = self._get_pca_features_df(X)
         fa_df = pd.concat([corr_df, coef_df, pvals_df, vif_df, pca_df], axis=1)
-        fa_df['total'] = fa_df['correlation_abs'] + fa_df['coefficient_abs']
+        fa_df['total'] = fa_df['correlation_abs'] + fa_df['coefficient_abs'] + fa_df['PCA1_abs'] + fa_df['PCA2_abs']
         return fa_df.sort_values(by='total', ascending=False)
 
     def plot_regression_feature_correlations(
@@ -454,7 +515,7 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         plt.tight_layout()
         plt.show()
 
-    def perform_unsupervised_regression_feature_selection(
+    def perform_unsupervised_regression_sfs_feature_selection(
             self,
             feature_transformer: ColumnTransformer,
             target_transformer: TransformerMixin,
@@ -462,6 +523,7 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         X, y = self.scale_and_encode(feature_transformer, target_transformer)
         feature_names = np.array(X.columns)
         ridge = RidgeCV(alphas=np.logspace(-6, 6, num=5)).fit(X, y)
+        print(f"RidgeCV best alpha {ridge.alpha_}")
         start = time.time()
         sfs_forward = SequentialFeatureSelector(
             ridge, n_features_to_select=n_features, direction="forward"
@@ -470,6 +532,32 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         print(f"Selected {n_features} features by forward sequential featureselection in {end - start:.3f} seconds")
         selected_features = feature_names[sfs_forward.get_support()]
         return [col.split('__')[1] for col in selected_features]
+
+    def perform_unsupervised_classification_sfs_feature_selection(
+            self,
+            feature_transformer: ColumnTransformer,
+            target_transformer: TransformerMixin,
+            n_features=10) -> np.ndarray:
+        # https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SequentialFeatureSelector.html
+        X, y = self.scale_and_encode(feature_transformer, target_transformer)
+        feature_names = np.array(X.columns)
+        for tol in [-1e-2, -1e-3, -1e-4]:
+            start = time()
+            feature_selector = SequentialFeatureSelector(
+                LogisticRegression(),
+                n_features_to_select="auto",
+                direction="backward",
+                scoring="roc_auc",
+                tol=tol,
+                n_jobs=2,
+            )
+            model = make_pipeline(feature_selector, LogisticRegression())
+            model.fit(X, y)
+            end = time()
+            print(f"\ntol: {tol}")
+            print(f"Features selected: {feature_names[model[0].get_support()]}")
+            print(f"ROC AUC score: {roc_auc_score(y, model.predict_proba(X)[:, 1]):.3f}")
+            print(f"Done in {end - start:.3f}s")
 
     def get_regression_important_features_df(self,
                                              fa_df: pd.DataFrame,
@@ -508,10 +596,10 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         ]))
 
     def get_final_ordinal_col_names(self, important_features_list: list) -> list:
-        return [value for value in self.ordinal_encoding_cols.keys() if value in important_features_list]
+        return [value for value in self.ordinal_encoding_col_dict.keys() if value in important_features_list]
 
     def plot_important_features(self, important_features_df: pd.DataFrame) -> None:
-        cols_to_drop = ['correlation', 'coefficient', 'pval', 'vif', 'PCA2']
+        cols_to_drop = ['pval', 'vif']
         plot_df = important_features_df.drop(columns=cols_to_drop)
         plot_df.plot(
             kind='bar',
@@ -523,21 +611,18 @@ class EdaToolbox(GenericSupervisedModelExecutor):
     def _get_pd_correlation_abs_features_df(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         corr = X.corrwith(other=y)
         corr_abs = corr.abs()
-        return pd.DataFrame({'correlation': corr, 'correlation_abs': corr_abs}, index=X.columns)
+        return pd.DataFrame({'correlation_abs': corr_abs}, index=X.columns)
 
     def _get_ridge_coefficient_abs_features_df(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         ridge = RidgeCV(alphas=np.logspace(-6, 6, num=7)).fit(X, y)
         print(f"Best RidgeCV alpha: {ridge.alpha_} (R^2 score: {ridge.score(X, y): .2f})")
         coef = ridge.coef_
         coef_abs: np.ndarray = np.abs(coef)
-        coef_max = coef_abs.max()
-        if coef_max > 0:
-            coef_abs /= coef_max
-        return pd.DataFrame({'coefficient': coef, 'coefficient_abs': coef_abs}, index=X.columns)
+        return pd.DataFrame({'coefficient_abs': coef_abs}, index=X.columns)
 
-    def _get_lr_pval_features_df(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    def _get_lr_pval_features_df(self, X: pd.DataFrame, y_unscaled: pd.Series) -> pd.DataFrame:
         # Looking for p-values < 0.05 which are statistically signicant
-        lr: RegressionResultsWrapper = sm.OLS(y, X).fit()
+        lr: RegressionResultsWrapper = sm.OLS(y_unscaled, X).fit()
         pvals_df = pd.DataFrame(
             lr.pvalues,
             columns=['pval'],
@@ -568,11 +653,14 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         n_components = 2
         pca_cols = []
         for n in range(1, n_components + 1):
-            pca_cols.append(f"PCA{n}")
+            pca_cols.append(f"PCA{n}_abs")
 
         pca = PCA(n_components=n_components, random_state=self.random_state)
         pca.fit_transform(X)
-        return pd.DataFrame(pca.components_.T, columns=pca_cols, index=X.columns)
+        pca_df = pd.DataFrame(pca.components_.T, columns=pca_cols, index=X.columns)
+        pca_df['PCA1_abs'] = abs(pca_df['PCA1_abs'])
+        pca_df['PCA2_abs'] = abs(pca_df['PCA2_abs'])
+        return pca_df
 
 
 class ClassifierMultiModelEvaluator(GenericSupervisedModelExecutor):
