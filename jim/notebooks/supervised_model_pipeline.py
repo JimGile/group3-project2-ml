@@ -20,10 +20,11 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import cross_val_score
 from statsmodels.regression.linear_model import RegressionResultsWrapper
 from statsmodels.stats.outliers_influence import variance_inflation_factor
-from sklearn.feature_selection import SequentialFeatureSelector
+from sklearn.feature_selection import SequentialFeatureSelector, RFECV
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import make_pipeline
+from sklearn.model_selection import StratifiedKFold, KFold
 
 
 def feature_name_combiner(feature_name: str, category: str) -> str:
@@ -477,12 +478,9 @@ class EdaToolbox(GenericSupervisedModelExecutor):
                 & (col_info_df['max_value_count_pct'] > prune_threshold_numerical))
         ].index)
 
-    def get_regression_feature_analysis_df(
-            self,
-            feature_transformer: ColumnTransformer,
-            target_transformer: TransformerMixin) -> pd.DataFrame:
+    def get_regression_feature_analysis_df(self) -> pd.DataFrame:
         y_unscaled = self.df[self.target_column]
-        X, y = self.scale_and_encode(feature_transformer, target_transformer)
+        X, y = self.scale_and_encode(self.feature_transformer, self.target_transformer)
         corr_df = self._get_pd_correlation_abs_features_df(X, y)
         coef_df = self._get_ridge_coefficient_abs_features_df(X, y)
         pvals_df = self._get_lr_pval_features_df(X, y_unscaled)
@@ -494,10 +492,8 @@ class EdaToolbox(GenericSupervisedModelExecutor):
 
     def plot_regression_feature_correlations(
             self,
-            feature_transformer: ColumnTransformer,
-            target_transformer: TransformerMixin,
             corr_min=0.5):
-        X, y = self.scale_and_encode(feature_transformer, target_transformer)
+        X, y = self.scale_and_encode(self.feature_transformer, self.target_transformer)
         corr_df = self._get_pd_correlation_abs_features_df(X, y)
         temp_df = X[list(corr_df[corr_df['correlation_abs'] > corr_min].index)]
         numeric_cols = temp_df.select_dtypes(include=[np.number])
@@ -515,12 +511,55 @@ class EdaToolbox(GenericSupervisedModelExecutor):
         plt.tight_layout()
         plt.show()
 
+    def perform_unsupervised_regression_rfe_feature_selection(
+            self,
+            regressor: BaseEstimator = LinearRegression()) -> pd.DataFrame:
+
+        # Separate features and target variable
+        X, y = self.scale_and_encode(self.feature_transformer, self.target_transformer)
+        feature_names = np.array(X.columns)
+        feature_names_out = [col.split('__')[1] for col in feature_names]
+
+        # Perform RFE with the given regressor
+        cv = KFold(5)
+        rfecv = RFECV(
+            estimator=regressor,
+            step=1,
+            cv=cv,
+            scoring="neg_mean_squared_error",
+            min_features_to_select=1,
+            n_jobs=2,
+        )
+        rfecv.fit(X, y)
+
+        # Retrieve results
+        print(f"Optimal number of features: {rfecv.n_features_}")
+        rfecv_results_df = pd.DataFrame(rfecv.cv_results_)
+        rfecv_results_df['selected'] = rfecv.support_
+        rfecv_results_df['ranking'] = rfecv.ranking_
+        rfecv_results_df['feature_name'] = feature_names_out
+
+        # Plot results removing outliers (mean_test_score < -1)
+        plot_df = rfecv_results_df[rfecv_results_df['mean_test_score'] > -1]
+        plt.figure()
+        plt.xlabel("Number of features selected")
+        plt.ylabel("neg_mean_squared_error")
+        plt.errorbar(
+            x=plot_df.index + 1,
+            y=plot_df["mean_test_score"],
+            yerr=plot_df["std_test_score"],
+        )
+        plt.title("Recursive Feature Elimination \nwith correlated features")
+        plt.show()
+        return rfecv_results_df
+
+    def get_rfe_selected_features(self, rfecv_results_df: pd.DataFrame) -> np.ndarray:
+        return rfecv_results_df[rfecv_results_df['selected']]['feature_name'].values
+
     def perform_unsupervised_regression_sfs_feature_selection(
             self,
-            feature_transformer: ColumnTransformer,
-            target_transformer: TransformerMixin,
             n_features=10) -> np.ndarray:
-        X, y = self.scale_and_encode(feature_transformer, target_transformer)
+        X, y = self.scale_and_encode(self.feature_transformer, self.target_transformer)
         feature_names = np.array(X.columns)
         ridge = RidgeCV(alphas=np.logspace(-6, 6, num=5)).fit(X, y)
         print(f"RidgeCV best alpha {ridge.alpha_}")
