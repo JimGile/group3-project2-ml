@@ -24,7 +24,7 @@ from sklearn.feature_selection import SequentialFeatureSelector, RFECV
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_auc_score
 from sklearn.pipeline import make_pipeline
-from sklearn.model_selection import StratifiedKFold, KFold
+from sklearn.model_selection import cross_validate, KFold, BaseCrossValidator
 
 
 def feature_name_combiner(feature_name: str, category: str) -> str:
@@ -431,10 +431,10 @@ class EdaToolbox(GenericSupervisedModelExecutor):
     def analyze_target_column_transformation_predictions(
             self,
             target_transformation_dict: dict[str, TransformerMixin],
-            model_dict: dict[str, BaseEstimator]) -> pd.DataFrame:
-        x_basic_transformer: ColumnTransformer = self.get_basic_ordinal_feature_transformer()
+            model_dict: dict[str, BaseEstimator],
+            cv: Optional[BaseCrossValidator] = None) -> pd.DataFrame:
         X = self._get_x()
-        X_scaled = x_basic_transformer.fit_transform(X)
+        X_scaled = self.feature_transformer.fit_transform(X)
         y = self._get_target_df()
 
         # Evaluate each model
@@ -444,13 +444,27 @@ class EdaToolbox(GenericSupervisedModelExecutor):
             trans_results = {}
             for name, y_transformer in target_transformation_dict.items():
                 y_scaled = y_transformer.fit_transform(y)
-                X_train, X_test, y_train, y_test = self.train_test_split(X_scaled, y_scaled)
-                model.fit(X_train, y_train.ravel())
-                y_pred = model.predict(X_test)
-                rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+                if cv is not None:
+                    rmse = self.cross_validate_model(model, X_scaled, y_scaled.ravel(), cv)
+                else:
+                    X_train, X_test, y_train, y_test = self.train_test_split(X_scaled, y_scaled)
+                    model.fit(X_train, y_train.ravel())
+                    y_pred = model.predict(X_test)
+                    rmse = np.sqrt(mean_squared_error(y_test, y_pred))
                 trans_results[name] = round(rmse, 6)
             model_results[model_name] = trans_results
         return pd.DataFrame(model_results)
+
+    def cross_validate_model(self, model, X, y, cv) -> float:
+        cv_results = cross_validate(
+            model,
+            X,
+            y,
+            cv=cv,
+            scoring=["neg_root_mean_squared_error"],
+        )
+        rmse = -cv_results["test_neg_root_mean_squared_error"]
+        return rmse.mean()
 
     def gather_initial_column_info(self) -> pd.DataFrame:
         # Separate features and target variable
@@ -822,12 +836,12 @@ class RegressorMultiModelEvaluator(GenericSupervisedModelExecutor):
             'r2_adj': [],
             'lr_cv_mean': [],
             'lr_cv_std': [],
-            'time': []
+            'time': [],
+            'y_pred': []
         }
         self.best_test_accuracy = 0
         self.best_model: Optional[RegressorMixin] = None
         self.best_model_name: Optional[str] = None
-        self.y_test_pred_list: list[np.ndarray] = []
 
     def set_column_transformer_properties(self,
                                           selected_feature_list: list[str] | None,
@@ -878,6 +892,20 @@ class RegressorMultiModelEvaluator(GenericSupervisedModelExecutor):
 
         # Return a dataframe from the evaluations dictionary with model as the index
         return pd.DataFrame(self.evaluations).set_index('model_name').sort_values(by='r2_adj', ascending=False)
+
+    def plot_model_evaluations(self) -> None:
+        fig, ax = plt.subplots(figsize=(12, 4))
+        fig.suptitle("Predictions by model")
+        ax.plot(
+            self.y_test,
+            "x-",
+            alpha=0.2,
+            label=f"Actual {self.target_column} values",
+            color="black",
+        )
+        for i in range(len(self.evaluations['model_name'])):
+            ax.plot(self.evaluations['y_pred'][i], "x-", label=self.evaluations['model_name'][i])
+        _ = ax.legend()
 
     def set_best_model(self, model_name: str) -> None:
         """
@@ -943,7 +971,6 @@ class RegressorMultiModelEvaluator(GenericSupervisedModelExecutor):
         """
         # Score the predictions with mse, r2, and r2_adj
         y_pred = model.predict(X_test)
-        self.y_test_pred_list.append(y_pred)
         r2 = model.score(X_test, y_test)
         r2_adj = self._r2_adj(X_test, y_test, r2)
         cv_scores = cross_val_score(LinearRegression(), X_test, y_test, cv=5, scoring="r2")
@@ -952,6 +979,7 @@ class RegressorMultiModelEvaluator(GenericSupervisedModelExecutor):
         self.evaluations['r2_adj'].append(r2_adj)
         self.evaluations['lr_cv_mean'].append(cv_scores.mean())
         self.evaluations['lr_cv_std'].append(cv_scores.std())
+        self.evaluations['y_pred'].append(y_pred)
         if r2_adj > self.best_test_accuracy:
             self.best_model_name = model_name
             self.best_model = model
