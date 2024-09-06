@@ -1,0 +1,165 @@
+https://real-faculty.wharton.upenn.edu/wp-content/uploads/~gyourko/WRLURI/GyourkoHartleyKrimmel_NBERw26573.pdf
+
+1) Local Political Pressure Index (LPPI)
+This subindex quantifies the degree to which various actors are involved in the local
+residential development process. The underlying data largely come from responses to Question
+3 on our survey, which asks the following: “In your community, how involved are the following
+in affecting residential building activities and/or growth management procedures?” Respondents
+then rate the importance of various actors—such as a local council or managers, local
+community pressure or other listed entity--on a 1 to 5 scale, with 1 indicating the actors have no
+involvement and 5 indicating they are “Very Involved.” To these scores, we add the number of
+land preservation and conservation-related ballot initiatives approved by the municipality
+between 2008 and August 2018. The ballot initiatives measure is based on the Trust for Public
+Land Landvote database.6
+Scores are summed as follows:
+(1) LPPI = LocalCouncil + Community Pressure + Other + BallotInitiatives
+
+2. State Political Involvement Index (SPII)
+The State Political Involvement Index (SPII) is based on the answer to a single question
+asking how involved is the state legislature in influencing residential building activities and/or
+growth management procedures. Thus,
+(2) SPII = StateLeg.
+Because this is a component of Question 3 described above with respect to the LPPI, its answers
+also range from 1 (no involvement) to 5 (very involved).
+
+3. Court Involvement Index (CII)
+This is the final index regarding the actors involved in the local residential land use
+process. The CII is the sum of the reported local and state courts’ involvement in affecting
+residential building activities and/or growth management (the sums of questions 3d and 3e,
+respectively). That is,
+(3) CII = LocalCourt + StateCourt.
+The potential range of values is from 2-10, with a value of two indicating that both local and
+state courts are not at all involved in the regulatory process, and a score of ten indicating that
+they are heavily involved. As with the first two subindexes, a higher degree of court
+involvement does not necessarily imply they are trying to make the local regulatory environment
+11
+more restrictive. Increased court involvement could arise from a desire to lighten the regulatory
+burden or re-zone municipalities for higher density. That said, Ganong and Shoag’s (2017)
+measure of land use regulations, which counted the number of land use legal cases by state, was
+strongly positively correlated with the WRLURI2006 index, so more court involvement well
+may be indicative of a more restrictive regulatory environment.
+
+4. Local Project Approval Index (LPAI)
+Question 4 of our survey asks for a different type of information on the process of
+regulatory control—namely, who must approve different types of projects before they can be
+built and whether approval requires a supermajority vote in favor. This subindex pertains to
+projects that do not require any variance to the current zoning code (i.e., they are ‘by right’
+because they do not violate any current rule or law).
+The question asks which of nine entities have to approve a project before any housing can
+be built. Eight specific entities listed include: the local planning commission; local zoning
+board; local council, managers, or commissioners; the county board of commissioners; the
+county zoning board; an environmental review board; a public health office; or a design review
+board; the ninth is ‘Other’ in case there is another group we did not list that is relevant.7 Thus,
+(4) LPAI = LocalPlan + LocZone + LocCouncil + CountyComm + CountyZone + Environ
++ PubHealth + Design + Other.
+Response values for each entity range from 0-2. A zero indicates the entity does not have
+to approve the project. A value of one indicates that the entity does have to approve, but may do
+so by a simple majority vote. A value of 2 indicates that the entity must not only formally
+approve the project, but must do so by a supermajority vote of its decision makers. Hence, the possible range of values for this index runs from 0-18. A value of zero indicates that there is no
+entity required to approve a ‘by right’ project, while a value of 18 would indicate that each of the
+eight listed entities, plus another listed by the respondent, must approve with a supermajority in
+favor.
+
+6. Local Assembly Index (LAI)
+The LAI uses the final piece of data generated from Question 4. That question also asks
+whether a town meeting is required to approve any type of proposed residential project. Rather
+than include this information as a component of the LPAI and LZAI indexes just described, we
+use it to create a separate index to capture whether the local regulatory environment requires
+some type of direct democracy involvement of the local population. Thus,
+(6) LAI = TownMeet,
+with the index values ranging from 0-2.
+
+7. Supply Restrictions Index (SRI)
+The Supply Restrictions Index reflects the extent to which there are explicit annual caps
+on the supply of new housing. Question 8 of the survey asks whether (in a simple ‘yes or no’
+sense) the respondent community places annual limits on the total allowable number of permitted
+units, total number units constructed, units per dwelling or the aggregate number of buildings
+constructed. More specifically, the question asks whether there are limits for the following:
+building permits for single family homes or multifamily units; the number of single family
+homes or multifamily units authorized for construction; the number of multifamily units
+buildings authorized for construction; and the number of units in multifamily dwellings. The
+SRI is the simple sum of the number of limits on building permits, construction, or number of
+dwellings and units and is constructed as follows:
+(7) SRI = SFPermits + MFPermits + SFConst + MFConst + MFBuild + MFUnitsDwell.
+Hence, its value ranges from a low of zero to a high of six.
+
+8. Density Restriction Index (DRI)
+One way to constrain housing supply is to impose density restrictions. Question 7 of the
+survey asks whether the community has any minimum lot size requirement at all, and if so, the
+size of the largest minimum required in any neighborhood within the jurisdiction. Specifically,
+respondents were asked to indicate whether their largest minimum required that homes be built
+on less than one-half acre of land, from 0.5-1.0 acres, from 1-2 acres or from 2+ acres.
+The DRI subindex takes on values ranging from 0-4 and is constructed as follows:
+(8) DRI = 0 if there is no minimum lot size regulation anywhere in the jurisdiction
+= 1 if there is a minimum, but it is no larger than 0.5 acres
+= 2 if there is a minimum, and the largest one is from 0.5-1.0 acres
+= 3 if there is a minimum, and the largest one is from 1.0-2.0 acres
+= 4, if there is a minimum, and the largest one is for more than 2 acres.
+
+9. Open Space Index (OSI)
+Question 9 of the survey asks about different types of regulations that communities might
+impose on developers in return for the right to build. One is whether residential real estate
+developers are required to provide some type of space for the community to use (or pay a fee in
+lieu of providing such space). This could reflect an explicit open space requirement or some
+mandate that space be provided for a specific community use. For simplicity, we call this the
+Open Space Index, with OSI measured as 0-1 dummy where a value of one indicates that some
+type of dedicated space is required to be provided (or a financially equivalent fee paid). Thus,
+(9) OSI = 1 if some type of mandatory space provision is required; =0 otherwise.
+
+10. Exactions Index (EI)
+Question 9 also asked whether the community required developers to pay any type of
+impact fee or the allocable share of the costs of infrastructure. The EI also is a 0-1 variable and
+is measured as follows:
+(10) EI = 1 if an impact fee exists and =0 otherwise.
+
+11. Affordable Housing Index (AHI)
+The final component to Question 9 asks whether developers were required to “Include
+affordable housing, however defined, in their projects” in order to be able to build in the
+jurisdiction. We interpret an answer in the affirmative to indicate that there exists some
+affordable housing requirement in the municipality. This also is a 0-1 variable such that
+(11) AHI = 1 an affordable housing program exists and =0 if not.
+
+12. Approval Delay Index (ADI)
+The final subindex used in creating our aggregate index is a measure of permit approval
+delay. The survey asks about project review time in several places (including questions 16, 17,
+18, 20, and 22). The Approval Delay Index (ADI) combines the average review time for 15
+residential projects, rezoning requests involving multiple unit types and subdivision requests into
+a single metric. The ADI is calculated in several steps. First, we compute the simple averages of
+review time (reported in months) for:
+(1) by-right single-family unit projects and by-right multifamily unit projects
+((sfprojrev + mfprojrev)/2) from Questions 16a and 16b);
+(2) not by-right single-family unit projects and not by-right multifamily unit projects
+((nsfprojrev + nmfprojrev)/2) from Questions 17a and 17b);
+(3) application for and issuance of a building permit for development of less than 50
+single-family units, 50 or more single-family units, and multi-family units
+((sfl50 + sfm50+ mf)/3) from Questions 20a, 20b, and 20c);
+(4) application for subdivision approval and issuance of a building permit for
+development of less than 50 single-family units, 50 or more single-family units, and
+multi-family units ((subsfl50 + subsfm50 + submf)/3) from Questions 22a, 22b, and
+22c).
+We then take the average of these four numbers to arrive at the number of months involved in the
+Approval Delay Index (ADI). More specifically,
+(12) ADI= {((sfprojrev + mfprojrev)/2) + ((nsfprojrev + nmfprojrev)/2) +
+((sfl50 + sfm50 + mf)/3) + ((subsfl50 + subsfm50 + submf)/3)}/4.
+This average across such a wide range of potential projects is used because we believe it helps
+reduce potential measurement error in this variable.
+
+II.B. Creating the Aggregate Index (WRLURI2018)
+Factor analysis is used to create the Wharton Residential Land Use Regulatory Index.
+Specifically, we select the first factor from each subindex to create an aggregate WRLURI2018
+value for each jurisdiction.9 As with the previous Wharton index, we employ this methodology
+to construct a single measure by which localities can be ranked based on the restrictiveness of
+their regulatory environments. We also standardize the WRLURI2018 measure such that the
+sample mean is 0 and its standard deviation is 1, with lower (higher) values of the index
+reflecting a less (more) restrictive regulatory regime in the community.
+Table 1 shows the weights, or factor loadings, of each subindex in the aggregate index, as
+well as the correlation with the aggregate index.10 Note that the Court Involvement Index, State
+Political Involvement Index, and Local Political Involvement Index have the highest factor
+loadings and almost the same strong correlation with the aggregate index, while the Density
+Restriction Index and Supply Restriction Index have the lowest factor loadings and weakest
+correlations with WRLURI18. This indicates that there is relatively high variation across
+communities in the different political and court involvement indexes, but not as much in the
+supply and density restriction measures. That implies the former set of subindexes are more
+influential in determining rankings of communities in terms of overall restrictiveness, but it does
+not mean they necessarily are the most influential in determining the absolute level of
+restrictiveness in a community.
