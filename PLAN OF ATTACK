@@ -1,0 +1,28 @@
+
+# To Do's
+
+* Finish the consolidation of the zillow files (Jim)
+    * Pivot tables for designated cities: Denver, Atlanta, Indianapolis, Buffalo, Providence, Cincinnati
+* Linear regression modeling (Tim and Anna, Jim optional)
+    * Try various models
+    * Optimize for best results
+    * Try modeling with pipeline
+* Regulation data (Carl)
+    * Cleanup
+    * EDA
+    * Modeling
+
+
+* Meet Monday
+    * Determine best models and graphics
+    * Carve out narrative based on requirements / shared presentation
+
+## Presentation here
+https://docs.google.com/presentation/d/173BV_MnqTNAOLiIGF60CaWKpuU6meASNKPr83_WyCG8/edit#slide=id.g28768449b51_0_120S
+
+
+
+## IF WE HAVE TIME
+
+* Source and cleanup data for crime and/or education
+    * Compare and correlate
