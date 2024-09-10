@@ -14,11 +14,9 @@ git clone https://github.com/timwillard24/house-prices-prediction.git
 - scikit-learn
 - time
 
-## Notebooks,Scripts, & Data files
-1. Main:
+## Notebooks & Scripts
 * city_house_prices_modeling.ipynb
 * supervised_model_pipeline.py
-2. Ancillary:
 * all_city_compiler.ipynb
 * bls_data_cleanup.ipynb
 * fred_data_additional_cleanup.ipynb
@@ -78,7 +76,7 @@ Key Components:
     - Preprocessing steps, such as imputation, scaling (using StandardScaler), and encoding (with OneHotEncoder, OrdinalEncoder), are included in the script.
     - PCA is included for dimensionality reduction.
 
-Key Usage:
+Features:
 - Users can import this script and use it as part of their machine learning projects by utilizing the custom transformer and pipeline structure.
 - The script supports building scikit-learn pipelines using the Pipeline and ColumnTransformer structures, where users can chain feature transformations, model training, and evaluation steps.
 - Users can specify a list of selected features when initializing the SelectedFeaturesTransformer to control which columns are used for training.
@@ -89,19 +87,19 @@ Future Expansion:
 This pipeline can be extended with additional models, feature selection techniques, or custom scoring functions to adapt to more complex machine learning tasks.
 
 # Ancillary
-## all_city_compiler.ipynb: 
+1. all_city_compiler.ipynb: 
 Compiles and merges city-level data from various sources into a unified dataset for further analysis.
-## bls_data_cleanup.ipynb: 
+2. bls_data_cleanup.ipynb: 
 Cleans and prepares data from the Bureau of Labor Statistics (BLS) for integration with other datasets in the project.
-## fred_data_additional_cleanup.ipynb: 
+3. fred_data_additional_cleanup.ipynb: 
 Processes additional economic data from the Federal Reserve Economic Data (FRED), focusing on ensuring consistency and preparing it for modeling.
-## nces_data_cleanup.ipynb: 
+4. nces_data_cleanup.ipynb: 
 Cleans and formats educational data from the National Center for Education Statistics (NCES) for inclusion in the overall analysis.
-## sale_price_city_cleanup.ipynb: 
+5. sale_price_city_cleanup.ipynb: 
 Focuses on cleaning and organizing city-level housing price data for predictive modeling and analysis.
-## zillow_new_metro_data_cleanup.ipynb: 
+6. zillow_new_metro_data_cleanup.ipynb: 
 Cleans and organizes new metro-level housing price data sourced from Zillow.
-## zillow_new_metro_data_combiner.ipynb: 
+7. zillow_new_metro_data_combiner.ipynb: 
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
 # Results
