@@ -107,7 +107,4 @@ Combines various metro-level datasets from Zillow into a single dataset for stre
 # Conclusion
 
 # Contributors
-Anna Fine
-Carl Peterson
-Jim Gile
-Tim Willard
+Anna Fine, Carl Peterson, Jim Gile, Tim Willard
