@@ -15,10 +15,11 @@ git clone https://github.com/timwillard24/house-prices-prediction.git
 - time
 
 ## Notebooks,Scripts, & Data files
-Main:
+1. Main:
 * city_house_prices_modeling.ipynb
 * supervised_model_pipeline.py
-Ancillary:
+
+2. Ancillary:
 * all_city_compiler.ipynb
 * bls_data_cleanup.ipynb
 * fred_data_additional_cleanup.ipynb
