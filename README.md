@@ -18,7 +18,6 @@ git clone https://github.com/timwillard24/house-prices-prediction.git
 1. Main:
 * city_house_prices_modeling.ipynb
 * supervised_model_pipeline.py
-
 2. Ancillary:
 * all_city_compiler.ipynb
 * bls_data_cleanup.ipynb
