@@ -1,11 +1,11 @@
-## Group 3 - Project 2 - Machine Learning
-# Analyzing & Predicting Housing Data
+# Group 3 - Project 2 - Machine Learning
+## Analyzing & Predicting Housing Data
 This project aims to analyze and predict house prices in various cities using machine learning techniques. The dataset includes house price data from multiple cities (Atlanta, Charlotte, Cincinnati, Denver, Indianapolis, Providence, and Tampa) from Zillow, Education datat from National Center for Educations Statistics (NCES), and mortgage rates from Federal Reserve Econimic Data (FRED), with the goal to develop a predictive model that can accurately estimate future home prices.
 
-# Clone Project
+## Clone Project
 git clone https://github.com/timwillard24/house-prices-prediction.git
 
-# Requirements - following must be installed
+## Requirements - following must be installed
 - matplotlib
 - numpy
 - pandas
@@ -14,7 +14,7 @@ git clone https://github.com/timwillard24/house-prices-prediction.git
 - scikit-learn
 - time
 
-# Notebooks,Scripts, & Data files
+## Notebooks,Scripts, & Data files
 Main:
 * city_house_prices_modeling.ipynb
 * supervised_model_pipeline.py
@@ -27,7 +27,7 @@ Ancillary:
 * zillow_metro_data_cleanup.ipynb
 * zillow_metro_data_combiner.ipynb
 
-# Data Files
+## Data Files
 * Atlanta_combined.csv
 * Charlotte_combined.csv
 * Cincinnati_combined.csv
@@ -36,8 +36,8 @@ Ancillary:
 * Indianapolis_combined.csv
 * Tampa_combined.csv
 
-## Main
-# city_house_prices_modeling.ipynb
+# Main
+## city_house_prices_modeling.ipynb
 This is the primary modeling notebook that utilizes data extraction, cleaning, transformation, and building a machine learning models to predict housing prices.  It can be used to analyze the indvidual and combined city CSV files and was used to predict 'MeanSalePrice' and compare against the actual 'MeanSalePrice' for individual cities and the combined file. 
 
 Features:
@@ -55,7 +55,7 @@ Features:
  - Utilize best model 
  - Plot Predictions vs actuals
 
-# supervised_model_pipeline.py 
+## supervised_model_pipeline.py 
 The script provides a framework for building a supervised learning model pipeline, primarily focusing on preprocessing, feature selection, model training, and evaluation. It aims to streamline the process of model creation while offering flexibility for different types of supervised learning tasks, such as regression or classification.
 
 Key Components:
@@ -88,33 +88,27 @@ Key Usage:
 Future Expansion:
 This pipeline can be extended with additional models, feature selection techniques, or custom scoring functions to adapt to more complex machine learning tasks.
 
-## Ancillary
-# all_city_compiler.ipynb: 
+# Ancillary
+## all_city_compiler.ipynb: 
 Compiles and merges city-level data from various sources into a unified dataset for further analysis.
-
-# bls_data_cleanup.ipynb: 
+## bls_data_cleanup.ipynb: 
 Cleans and prepares data from the Bureau of Labor Statistics (BLS) for integration with other datasets in the project.
-
-# fred_data_additional_cleanup.ipynb: 
+## fred_data_additional_cleanup.ipynb: 
 Processes additional economic data from the Federal Reserve Economic Data (FRED), focusing on ensuring consistency and preparing it for modeling.
-
-# nces_data_cleanup.ipynb: 
+## nces_data_cleanup.ipynb: 
 Cleans and formats educational data from the National Center for Education Statistics (NCES) for inclusion in the overall analysis.
-
-# sale_price_city_cleanup.ipynb: 
+## sale_price_city_cleanup.ipynb: 
 Focuses on cleaning and organizing city-level housing price data for predictive modeling and analysis.
-
-# zillow_new_metro_data_cleanup.ipynb: 
+## zillow_new_metro_data_cleanup.ipynb: 
 Cleans and organizes new metro-level housing price data sourced from Zillow.
-
-# zillow_new_metro_data_combiner.ipynb: 
+## zillow_new_metro_data_combiner.ipynb: 
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
-## Results
+# Results
 
-## Conclusion
+# Conclusion
 
-## Contributors
+# Contributors
 Anna Fine
 Carl Peterson
 Jim Gile
