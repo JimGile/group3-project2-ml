@@ -1,6 +1,6 @@
 # Group 3 - Project 2 - Machine Learning
 ## Analyzing & Predicting Housing Data
-This project aims to analyze and predict house prices in various cities using machine learning techniques. The dataset includes house price data from multiple cities (Atlanta, Charlotte, Cincinnati, Denver, Indianapolis, Providence, and Tampa) from Zillow, Education datat from National Center for Educations Statistics (NCES), and mortgage rates from Federal Reserve Econimic Data (FRED), with the goal to develop a predictive model that can accurately estimate future home prices.
+This project aims to analyze and predict house prices in various cities using machine learning techniques. The dataset includes city housing prices data (Atlanta, Charlotte, Cincinnati, Denver, Indianapolis, Providence, and Tampa) from Zillow, Education data from National Center for Educations Statistics (NCES), and mortgage rates from Federal Reserve Econimic Data (FRED), with the goal to develop a predictive model that can accurately estimate future home prices.
 
 ## Clone Project
 git clone https://github.com/timwillard24/house-prices-prediction.git
