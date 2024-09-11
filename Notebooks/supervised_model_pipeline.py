@@ -95,18 +95,18 @@ class GenericSupervisedModelExecutor:
             test_size (float): The proportion of the dataset to include in the test split.
             random_state (int): The random seed for reproducibility.
             prune_threshold_numerical(float): The column pruning threshold for numerical columns.
-                Defaults to 1.0, no pruning.
+                Defaults to 1.1, no pruning.
             prune_threshold_categorical(float): The column pruning threshold for categorical columns.
-                Defaults to 1.0, no pruning.
+                Defaults to 1.1, no pruning.
             ordinal_encoding_cols(dict[str, list]): The dictionary of columns that need ordinal encoding.
         """
         self.df = df
         self.target_column = target_column
         self.test_size = test_size
         self.random_state = random_state
-        self.prune_infreq_numerical = 1.0
-        self.prune_infreq_categorical = 1.0
-        self.prune_pct_missing = 1.0
+        self.prune_infreq_numerical = 1.1
+        self.prune_infreq_categorical = 1.1
+        self.prune_pct_missing = 1.1
         self.ordinal_encoding_col_dict: dict[str, list] = {}
         self.selected_feature_list: Optional[list[str]] = None
         self.basic_ordinal_feature_transformer: Optional[ColumnTransformer] = None
@@ -933,6 +933,7 @@ class RegressorMultiModelEvaluator(GenericSupervisedModelExecutor):
         """
         # Preprocess the new data
         X_scaled = self.feature_transformer.fit_transform(new_data)
+        print(f'Number scaled X cols: {X_scaled.shape[1]}')
 
         # Make predictions
         self.predictions = self.best_model.predict(X_scaled)
