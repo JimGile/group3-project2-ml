@@ -103,6 +103,12 @@ Cleans and organizes new metro-level housing price data sourced from Zillow.
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
 # Results
+Based on HistGradientBoost:
+Providence, Tampa and Atlanta are the two cities we can more confidently predict to. Atlanta, Indianapolis, and Denver has the highest growth.
+
+Based on Prophet:
+Atlanta, Denver and Tampa have the most consistent growth
+
 
 # Conclusion
 
