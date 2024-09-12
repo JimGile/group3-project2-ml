@@ -106,17 +106,8 @@ Cleans and organizes new metro-level housing price data sourced from Zillow.
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
 # Results
-<<<<<<< HEAD
-Based on HistGradientBoost:
-Providence, Tampa and Atlanta are the two cities we can more confidently predict to. Atlanta, Indianapolis, and Denver has the highest growth.
-
-Based on Prophet:
-Atlanta, Denver and Tampa have the most consistent growth
-
-=======
 ![Model and Transformer effectiveness ](image.png)
 ![Atlanta Predictions](image-1.png)
->>>>>>> 6b4c2eb (README updates)
 
 # Conclusion
 Based on the modeling we did we came to the conclusion that Atlanta would be the best place to purchase a new home.  It had steady increase in home values over the years and should continue to see increasing home values over the years to come.  Both the HistGradientBoost and Prophet models were used to come to this conclusion.
