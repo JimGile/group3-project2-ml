@@ -2,6 +2,9 @@
 ## Analyzing & Predicting Housing Data
 This project aims to analyze and predict house prices in various cities using machine learning techniques. The dataset includes city housing prices data (Atlanta, Charlotte, Cincinnati, Denver, Indianapolis, Providence, and Tampa) from Zillow, Education data from National Center for Educations Statistics (NCES), and mortgage rates from Federal Reserve Econimic Data (FRED), with the goal to develop a predictive model that can accurately estimate future home prices.
 
+## Presentation:
+https://docs.google.com/presentation/d/173BV_MnqTNAOLiIGF60CaWKpuU6meASNKPr83_WyCG8/edit#slide=id.g28768449b51_0_6
+
 ## Clone Project
 git clone https://github.com/timwillard24/house-prices-prediction.git
 
@@ -103,14 +106,11 @@ Cleans and organizes new metro-level housing price data sourced from Zillow.
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
 # Results
-Based on HistGradientBoost:
-Providence, Tampa and Atlanta are the two cities we can more confidently predict to. Atlanta, Indianapolis, and Denver has the highest growth.
-
-Based on Prophet:
-Atlanta, Denver and Tampa have the most consistent growth
-
+![Model and Transformer effectiveness ](image.png)
+![Atlanta Predictions](image-1.png)
 
 # Conclusion
+Based on the modeling we did we came to the conclusion that Atlanta would be the best place to purchase a new home.  It had steady increase in home values over the years and should continue to see increasing home values over the years to come.  Both the HistGradientBoost and Prophet models were used to come to this conclusion.
 
 # Contributors
 Anna Fine, Carl Peterson, Jim Gile, Tim Willard
