@@ -21,13 +21,14 @@ git clone https://github.com/timwillard24/house-prices-prediction.git
 - time
 
 ## Notebooks & Scripts
-* city_house_prices_modeling.ipynb
-* supervised_model_pipeline.py
 * all_city_compiler.ipynb
 * bls_data_cleanup.ipynb
+* city_house_prices_modeling.ipynb
 * fred_data_additional_cleanup.ipynb
 * nces_data_cleanup
+* prophet_model_all_cities.ipynb
 * sale_price_city_cleanup.ipynb
+* supervised_model_pipeline.py
 * zillow_metro_data_cleanup.ipynb
 * zillow_metro_data_combiner.ipynb
 
@@ -101,11 +102,13 @@ Cleans and prepares data from the Bureau of Labor Statistics (BLS) for integrati
 Processes additional economic data from the Federal Reserve Economic Data (FRED), focusing on ensuring consistency and preparing it for modeling.
 4. nces_data_cleanup.ipynb: 
 Cleans and formats educational data from the National Center for Education Statistics (NCES) for inclusion in the overall analysis.
-5. sale_price_city_cleanup.ipynb: 
+5. prophet_model_all_cities.ipynb:
+Provides a prediction model for 12 months pricing into the future for each individual city
+6. sale_price_city_cleanup.ipynb: 
 Focuses on cleaning and organizing city-level housing price data for predictive modeling and analysis.
-6. zillow_new_metro_data_cleanup.ipynb: 
+7. zillow_new_metro_data_cleanup.ipynb: 
 Cleans and organizes new metro-level housing price data sourced from Zillow.
-7. zillow_new_metro_data_combiner.ipynb: 
+8. zillow_new_metro_data_combiner.ipynb: 
 Combines various metro-level datasets from Zillow into a single dataset for streamlined analysis.
 
 # Results
