@@ -5,6 +5,9 @@ This project aims to analyze and predict house prices in various cities using ma
 ## Presentation:
 https://docs.google.com/presentation/d/173BV_MnqTNAOLiIGF60CaWKpuU6meASNKPr83_WyCG8/edit#slide=id.g28768449b51_0_6
 
+## GitHub:
+https://github.com/JimGile/group3-project2-ml.git
+
 ## Clone Project
 git clone https://github.com/timwillard24/house-prices-prediction.git
 
